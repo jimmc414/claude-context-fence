@@ -6,7 +6,7 @@ A design pattern for LLM tool skills that separates context awareness from dense
 
 ## The Problem
 
-Context windows are finite. Dense reference material — command catalogs, API references, recipe collections, decision matrices — is valuable but bloats context. You want both conversation awareness and comprehensive references, but a single skill cannot be both lightweight and comprehensive without paying the full token cost of loading everything into the main context window.
+Context windows are finite. Dense reference material like command catalogs, API references, recipe collections, decision matrices is valuable but bloats context. You want both conversation awareness and comprehensive references, but a single skill cannot be both lightweight and comprehensive without paying the full token cost of loading everything into the main context window.
 
 The tension is structural. Thin skills that inherit the conversation can react to what the user actually said, but they carry no depth. Fat skills loaded with hundreds of recipes have depth, but every line of reference material occupies tokens in the main context whether or not it is relevant to the current query. A 1,500-line recipes file costs roughly 15,000 tokens just to be present.
 
@@ -51,7 +51,7 @@ flowchart TD
 
 ### Token economics
 
-The fork boundary means recipes content — which can be hundreds or thousands of lines — never enters the main context window. The router adds roughly 100-160 lines to context; the recipes store contributes zero. The savings scale with the density of the reference material.
+The fork boundary means recipes content which can be hundreds or thousands of lines never enters the main context window. The router adds roughly 100-160 lines to context; the recipes store contributes zero. The savings scale with the density of the reference material.
 
 Real numbers from the reference implementation:
 
@@ -71,7 +71,7 @@ The router's description is deliberately richer and more specific than the recip
 
 ### Graceful degradation
 
-The system handles misuse without failure. Direct recipes invocation works if the user provides explicit arguments — the fork simply processes them without conversation context. Vague router invocation triggers clarifying questions, because the router can see the conversation and recognize insufficient information. Trivial tasks bypass skills entirely; the LLM can always answer directly from its training data. No invocation path produces an error that the user cannot recover from.
+The system handles misuse without failure. Direct recipes invocation works if the user provides explicit arguments, the fork simply processes them without conversation context. Vague router invocation triggers clarifying questions, because the router can see the conversation and recognize insufficient information. Trivial tasks bypass skills entirely; the LLM can always answer directly from its training data. No invocation path produces an error that the user cannot recover from.
 
 ## Quick Start
 
@@ -195,3 +195,4 @@ This is the single highest-leverage improvement available when writing skill des
 4. **Source code availability short-circuits routing.** When the user's question can be answered by reading available source code, the LLM may bypass skills entirely. This is correct behavior, not a bug, but it means skill usage is not guaranteed even when a relevant skill exists.
 
 5. **Not a retrieval system.** The router reads conversation context linearly. It does not perform semantic search or have access to external memory. Context extraction quality depends on how recently and clearly the relevant information appeared in conversation. Information from hundreds of messages ago may not be reliably extracted.
+
